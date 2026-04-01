@@ -11,13 +11,13 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Projet Manager API", description="API pour la gestion de portefeuille projets interne")
 
-# CORS middleware for local development if needed
+# CORS middleware for local intranet
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:8000", "http://127.0.0.1:8000"],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type", "Accept"],
 )
 
 app.include_router(auth_router.router)

@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Hide elements for Readers
         const role = localStorage.getItem('user_role');
         if (role === 'Lecteur') {
-            document.querySelectorAll('.btn-primary, .btn-success, .btn-danger, [onclick^="openModal"], [onclick^="openNew"], [onclick^="openEdit"]').forEach(el => {
+            document.querySelectorAll('.btn-primary, .btn-success, .btn-danger, [onclick^="openModal"], [onclick^="openNew"], [onclick^="openEdit"], [onclick^="resetMilestone"], [onclick^="resetDecision"], [onclick^="resetMeeting"], [onclick^="resetTask"], [onclick^="resetDocument"]').forEach(el => {
                 el.style.display = 'none';
             });
         }

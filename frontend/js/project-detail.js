@@ -47,7 +47,16 @@ async function loadProjectDetails() {
         document.getElementById('edit-progress').value = projectData.progress_percentage;
         document.getElementById('edit-status').value = projectData.status;
         document.getElementById('edit-alert').value = projectData.alert_level;
+        document.getElementById('edit-manager').value = projectData.manager || '';
         document.getElementById('edit-desc').value = projectData.description || '';
+        document.getElementById('edit-obj').value = projectData.objective || '';
+        document.getElementById('edit-scope').value = projectData.scope || '';
+        document.getElementById('edit-sponsor').value = projectData.sponsor || '';
+        document.getElementById('edit-stakeholders').value = projectData.stakeholders || '';
+        document.getElementById('edit-priority').value = projectData.priority || 'Moyenne';
+        document.getElementById('edit-start').value = projectData.start_date || '';
+        document.getElementById('edit-target').value = projectData.target_date || '';
+        document.getElementById('edit-comment').value = projectData.general_comment || '';
 
         // Populate Tables
         renderMilestones();
@@ -72,10 +81,14 @@ function renderMilestones() {
     if(projectData.milestones.length === 0) { tbody.innerHTML = '<tr><td colspan="4">Aucun jalon</td></tr>'; return; }
 
     // Sort chronological
-    const sorted = [...projectData.milestones].sort((a,b) => new Date(a.planned_date) - new Date(b.planned_date));
+    const sorted = [...projectData.milestones].sort((a,b) => {
+        if (!a.planned_date) return 1;
+        if (!b.planned_date) return -1;
+        return new Date(a.planned_date) - new Date(b.planned_date);
+    });
 
     sorted.forEach(m => {
-        const isLate = m.status !== 'Réalisé' && m.status !== 'Annulé' && new Date(m.planned_date) < new Date();
+        const isLate = m.status !== 'Réalisé' && m.status !== 'Annulé' && m.planned_date && new Date(m.planned_date) < new Date();
         const rowClass = isLate ? 'style="color: var(--danger-color); font-weight:bold;"' : '';
         const actions = checkAccess(['Administrateur', 'Éditeur']) ?
             `<button onclick='editMilestone(${JSON.stringify(m).replace(/'/g, "&apos;")})' class="btn btn-sm btn-secondary">Editer</button>
@@ -113,7 +126,7 @@ function renderTasks() {
     tbody.innerHTML = '';
     if(projectData.tasks.length === 0) { tbody.innerHTML = '<tr><td colspan="5">Aucune tâche</td></tr>'; return; }
     projectData.tasks.forEach(t => {
-        const isLate = t.status !== 'Terminée' && t.status !== 'Annulée' && new Date(t.due_date) < new Date();
+        const isLate = t.status !== 'Terminée' && t.status !== 'Annulée' && t.due_date && new Date(t.due_date) < new Date();
         const rowClass = isLate ? 'style="color: var(--danger-color); font-weight:bold;"' : '';
         const actions = checkAccess(['Administrateur', 'Éditeur']) ?
             `<button onclick='editTask(${JSON.stringify(t).replace(/'/g, "&apos;")})' class="btn btn-sm btn-secondary">Editer</button>
@@ -216,11 +229,19 @@ async function updateProject(e) {
         code: projectData.code,
         name: projectData.name,
         category_id: projectData.category_id,
-        manager: projectData.manager,
-        progress_percentage: document.getElementById('edit-progress').value,
+        manager: document.getElementById('edit-manager').value,
+        progress_percentage: parseFloat(document.getElementById('edit-progress').value),
         status: document.getElementById('edit-status').value,
         alert_level: document.getElementById('edit-alert').value,
-        description: document.getElementById('edit-desc').value
+        description: document.getElementById('edit-desc').value,
+        objective: document.getElementById('edit-obj').value,
+        scope: document.getElementById('edit-scope').value,
+        sponsor: document.getElementById('edit-sponsor').value,
+        stakeholders: document.getElementById('edit-stakeholders').value,
+        priority: document.getElementById('edit-priority').value,
+        start_date: document.getElementById('edit-start').value || null,
+        target_date: document.getElementById('edit-target').value || null,
+        general_comment: document.getElementById('edit-comment').value
     };
 
     try {
@@ -231,6 +252,15 @@ async function updateProject(e) {
         closeModal('edit-project-modal');
         await loadProjectDetails();
     } catch (e) { console.error("Update error", e); }
+}
+
+async function archiveProject() {
+    if(confirm("Voulez-vous vraiment archiver ce projet ?")) {
+        try {
+            await fetchAPI(`/projects/${projectId}`, { method: 'DELETE' });
+            window.location.href = '/projects.html';
+        } catch (e) { console.error("Archiving error", e); }
+    }
 }
 
 async function handleMilestoneSubmit(e) {

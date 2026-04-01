@@ -26,7 +26,8 @@ def create_project(project: schemas.ProjectCreate, db: Session = Depends(get_db)
         raise HTTPException(status_code=400, detail="Error creating project. Code might be duplicate.")
 
     # Log activity
-    log = models.ActivityLog(project_id=db_project.id, user="System", action="Create Project")
+    user_name = current_user.username if current_user else "System"
+    log = models.ActivityLog(project_id=db_project.id, user=user_name, action="Create Project")
     db.add(log)
     db.commit()
 
@@ -50,7 +51,8 @@ def update_project(project_id: int, project: schemas.ProjectUpdate, db: Session 
         setattr(db_project, key, value)
 
     # Log activity
-    log = models.ActivityLog(project_id=db_project.id, user="System", action="Update Project")
+    user_name = current_user.username if current_user else "System"
+    log = models.ActivityLog(project_id=db_project.id, user=user_name, action="Update Project")
     db.add(log)
     db.commit()
     db.refresh(db_project)
@@ -65,7 +67,8 @@ def archive_project(project_id: int, db: Session = Depends(get_db), current_user
     db_project.archived_at = datetime.utcnow()
     db_project.status = "Archivé"
 
-    log = models.ActivityLog(project_id=db_project.id, user="System", action="Archive Project")
+    user_name = current_user.username if current_user else "System"
+    log = models.ActivityLog(project_id=db_project.id, user=user_name, action="Archive Project")
     db.add(log)
     db.commit()
     return {"status": "success"}
