@@ -23,8 +23,8 @@
             <button class="btn btn-primary" onclick="openNewProjectModal()">+ Nouveau Projet</button>
         </div>
 
-        <div class="filters card">
-            <input type="text" id="search-input" placeholder="Rechercher par nom ou code..." class="form-control">
+        <div class="filters card grid-2" style="grid-template-columns: repeat(4, 1fr);">
+            <input type="text" id="search-input" placeholder="Nom ou code..." class="form-control">
             <select id="filter-category" class="form-control">
                 <option value="">Toutes les catégories</option>
             </select>
@@ -38,6 +38,26 @@
                 <option value="Terminé">Terminé</option>
                 <option value="Archivé">Archivé</option>
                 <option value="Abandonné">Abandonné</option>
+            </select>
+            <select id="filter-priority" class="form-control">
+                <option value="">Toutes priorités</option>
+                <option value="Basse">Basse</option>
+                <option value="Moyenne">Moyenne</option>
+                <option value="Haute">Haute</option>
+                <option value="Critique">Critique</option>
+            </select>
+        </div>
+        <div class="filters card grid-2" style="grid-template-columns: repeat(3, 1fr); margin-top: -1rem;">
+            <input type="text" id="filter-manager" placeholder="Responsable..." class="form-control">
+            <label style="display:flex; align-items:center; gap: 0.5rem;">
+                <input type="checkbox" id="filter-archived"> Afficher archivés
+            </label>
+            <select id="sort-by" class="form-control">
+                <option value="date_desc">Trier par: Date (Récent)</option>
+                <option value="date_asc">Trier par: Date (Ancien)</option>
+                <option value="status">Trier par: Statut</option>
+                <option value="priority">Trier par: Priorité</option>
+                <option value="category">Trier par: Catégorie</option>
             </select>
         </div>
 

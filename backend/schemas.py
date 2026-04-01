@@ -2,6 +2,28 @@ from pydantic import BaseModel, Field
 from typing import Optional, List
 from datetime import date, datetime
 
+# Auth
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    username: Optional[str] = None
+    role: Optional[str] = None
+
+class UserBase(BaseModel):
+    username: str
+    role: str = "Lecteur"
+
+class UserCreate(UserBase):
+    password: str
+
+class User(UserBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
 # Models
 class ProjectCategoryBase(BaseModel):
     name: str
@@ -158,27 +180,6 @@ class Project(ProjectBase):
     class Config:
         from_attributes = True
 
-class ProjectDetail(Project):
-    category: ProjectCategory
-    milestones: List[Milestone] = []
-    meetings: List[Meeting] = []
-    decisions: List[Decision] = []
-    tasks: List[Task] = []
-    documents: List[Document] = []
-
-    class Config:
-        from_attributes = True
-
-# Dashboard
-class DashboardStats(BaseModel):
-    total_projects: int
-    projects_by_category: dict
-    projects_by_status: dict
-    overdue_tasks: int
-    upcoming_milestones: int
-    recent_decisions: List[Decision]
-    recent_meetings: List[Meeting]
-
 # Activity Log
 class ActivityLogBase(BaseModel):
     project_id: Optional[int] = None
@@ -195,3 +196,25 @@ class ActivityLog(ActivityLogBase):
 
     class Config:
         from_attributes = True
+
+class ProjectDetail(Project):
+    category: ProjectCategory
+    milestones: List[Milestone] = []
+    meetings: List[Meeting] = []
+    decisions: List[Decision] = []
+    tasks: List[Task] = []
+    documents: List[Document] = []
+    activity_logs: List[ActivityLog] = []
+
+    class Config:
+        from_attributes = True
+
+# Dashboard
+class DashboardStats(BaseModel):
+    total_projects: int
+    projects_by_category: dict
+    projects_by_status: dict
+    overdue_tasks: int
+    upcoming_milestones: int
+    recent_decisions: List[Decision]
+    recent_meetings: List[Meeting]

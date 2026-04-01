@@ -36,6 +36,7 @@
             <button class="tablink" onclick="openTab(event, 'Seances')">Séances</button>
             <button class="tablink" onclick="openTab(event, 'Taches')">Tâches</button>
             <button class="tablink" onclick="openTab(event, 'Documents')">Documents</button>
+            <button class="tablink" onclick="openTab(event, 'Historique')">Historique</button>
         </div>
 
         <div id="Synthese" class="tabcontent" style="display: block;">
@@ -77,10 +78,10 @@
             <div class="card">
                 <div class="page-header">
                     <h2>Roadmap / Jalons</h2>
-                    <button class="btn btn-primary btn-sm" onclick="openModal('new-milestone-modal')">+ Ajouter</button>
+                    <button class="btn btn-primary btn-sm" onclick="resetMilestoneForm()">+ Ajouter</button>
                 </div>
                 <table class="table">
-                    <thead><tr><th>Titre</th><th>Prévu le</th><th>Statut</th></tr></thead>
+                    <thead><tr><th>Titre</th><th>Prévu le</th><th>Statut</th><th>Actions</th></tr></thead>
                     <tbody id="milestones-table-body"></tbody>
                 </table>
             </div>
@@ -90,10 +91,10 @@
             <div class="card">
                 <div class="page-header">
                     <h2>Décisions</h2>
-                    <button class="btn btn-primary btn-sm" onclick="openModal('new-decision-modal')">+ Ajouter</button>
+                    <button class="btn btn-primary btn-sm" onclick="resetDecisionForm()">+ Ajouter</button>
                 </div>
                 <table class="table">
-                    <thead><tr><th>Date</th><th>Titre</th><th>Décideur</th><th>Statut</th></tr></thead>
+                    <thead><tr><th>Date</th><th>Titre</th><th>Décideur</th><th>Statut</th><th>Actions</th></tr></thead>
                     <tbody id="decisions-table-body"></tbody>
                 </table>
             </div>
@@ -103,10 +104,10 @@
             <div class="card">
                 <div class="page-header">
                     <h2>Séances</h2>
-                    <button class="btn btn-primary btn-sm" onclick="openModal('new-meeting-modal')">+ Ajouter</button>
+                    <button class="btn btn-primary btn-sm" onclick="resetMeetingForm()">+ Ajouter</button>
                 </div>
                 <table class="table">
-                    <thead><tr><th>Date</th><th>Heure</th><th>Titre</th><th>Type</th></tr></thead>
+                    <thead><tr><th>Date</th><th>Heure</th><th>Titre</th><th>Type</th><th>Actions</th></tr></thead>
                     <tbody id="meetings-table-body"></tbody>
                 </table>
             </div>
@@ -116,10 +117,10 @@
             <div class="card">
                 <div class="page-header">
                     <h2>Tâches</h2>
-                    <button class="btn btn-primary btn-sm" onclick="openModal('new-task-modal')">+ Ajouter</button>
+                    <button class="btn btn-primary btn-sm" onclick="resetTaskForm()">+ Ajouter</button>
                 </div>
                 <table class="table">
-                    <thead><tr><th>Titre</th><th>Responsable</th><th>Échéance</th><th>Statut</th></tr></thead>
+                    <thead><tr><th>Titre</th><th>Responsable</th><th>Échéance</th><th>Statut</th><th>Actions</th></tr></thead>
                     <tbody id="tasks-table-body"></tbody>
                 </table>
             </div>
@@ -129,10 +130,10 @@
             <div class="card">
                 <div class="page-header">
                     <h2>Documents Référencés</h2>
-                    <button class="btn btn-primary btn-sm" onclick="openModal('new-document-modal')">+ Ajouter</button>
+                    <button class="btn btn-primary btn-sm" onclick="resetDocumentForm()">+ Ajouter</button>
                 </div>
                 <table class="table">
-                    <thead><tr><th>Titre</th><th>Type</th><th>Chemin/URL</th></tr></thead>
+                    <thead><tr><th>Titre</th><th>Type</th><th>Chemin/URL</th><th>Actions</th></tr></thead>
                     <tbody id="documents-table-body"></tbody>
                 </table>
             </div>
@@ -182,15 +183,114 @@
         </div>
     </div>
 
-    <!-- Modals for sub-items would be defined similarly here. For MVP we create a generic placeholder script. -->
+    <div id="Historique" class="tabcontent" style="display: none;">
+        <div class="card">
+            <h2>Historique</h2>
+            <table class="table">
+                <thead><tr><th>Date</th><th>Utilisateur</th><th>Action</th><th>Détails</th></tr></thead>
+                <tbody id="history-table-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modals for sub-items -->
     <div id="new-milestone-modal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('new-milestone-modal')">&times;</span>
-            <h2>Nouveau Jalon</h2>
+            <h2 id="modal-title-milestone">Nouveau Jalon</h2>
             <form id="new-milestone-form">
-                <div class="form-group"><label>Titre*</label><input type="text" id="m-title" required></div>
-                <div class="form-group"><label>Date Prévue</label><input type="date" id="m-date"></div>
-                <button type="submit" class="btn btn-success">Créer</button>
+                <input type="hidden" id="m-id">
+                <div class="form-group"><label>Titre*</label><input type="text" id="m-title" required class="form-control"></div>
+                <div class="form-group"><label>Date Prévue</label><input type="date" id="m-date" class="form-control"></div>
+                <div class="form-group">
+                    <label>Statut</label>
+                    <select id="m-status" class="form-control">
+                        <option value="À venir">À venir</option>
+                        <option value="En cours">En cours</option>
+                        <option value="Réalisé">Réalisé</option>
+                        <option value="Reporté">Reporté</option>
+                        <option value="Annulé">Annulé</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-success">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="new-decision-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('new-decision-modal')">&times;</span>
+            <h2 id="modal-title-decision">Nouvelle Décision</h2>
+            <form id="new-decision-form">
+                <input type="hidden" id="d-id">
+                <div class="form-group"><label>Date*</label><input type="date" id="d-date" required class="form-control"></div>
+                <div class="form-group"><label>Titre*</label><input type="text" id="d-title" required class="form-control"></div>
+                <div class="form-group"><label>Décideur</label><input type="text" id="d-decider" class="form-control"></div>
+                <div class="form-group"><label>Description</label><textarea id="d-desc" class="form-control"></textarea></div>
+                <div class="form-group">
+                    <label>Statut de mise en œuvre</label>
+                    <select id="d-status" class="form-control">
+                        <option value="À faire">À faire</option>
+                        <option value="En cours">En cours</option>
+                        <option value="Terminé">Terminé</option>
+                        <option value="Annulé">Annulé</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-success">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="new-meeting-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('new-meeting-modal')">&times;</span>
+            <h2 id="modal-title-meeting">Nouvelle Séance</h2>
+            <form id="new-meeting-form">
+                <input type="hidden" id="mt-id">
+                <div class="form-group"><label>Date*</label><input type="date" id="mt-date" required class="form-control"></div>
+                <div class="form-group"><label>Heure</label><input type="time" id="mt-time" class="form-control"></div>
+                <div class="form-group"><label>Titre*</label><input type="text" id="mt-title" required class="form-control"></div>
+                <div class="form-group"><label>Type</label><input type="text" id="mt-type" class="form-control"></div>
+                <div class="form-group"><label>Résumé</label><textarea id="mt-summary" class="form-control"></textarea></div>
+                <button type="submit" class="btn btn-success">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="new-task-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('new-task-modal')">&times;</span>
+            <h2 id="modal-title-task">Nouvelle Tâche</h2>
+            <form id="new-task-form">
+                <input type="hidden" id="t-id">
+                <div class="form-group"><label>Titre*</label><input type="text" id="t-title" required class="form-control"></div>
+                <div class="form-group"><label>Responsable</label><input type="text" id="t-assignee" class="form-control"></div>
+                <div class="form-group"><label>Échéance</label><input type="date" id="t-date" class="form-control"></div>
+                <div class="form-group">
+                    <label>Statut</label>
+                    <select id="t-status" class="form-control">
+                        <option value="À faire">À faire</option>
+                        <option value="En cours">En cours</option>
+                        <option value="En attente">En attente</option>
+                        <option value="Terminée">Terminée</option>
+                        <option value="Annulée">Annulée</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-success">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="new-document-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('new-document-modal')">&times;</span>
+            <h2 id="modal-title-document">Nouveau Document</h2>
+            <form id="new-document-form">
+                <input type="hidden" id="doc-id">
+                <div class="form-group"><label>Titre*</label><input type="text" id="doc-title" required class="form-control"></div>
+                <div class="form-group"><label>Type</label><input type="text" id="doc-type" class="form-control"></div>
+                <div class="form-group"><label>Chemin / URL*</label><input type="text" id="doc-path" required class="form-control"></div>
+                <button type="submit" class="btn btn-success">Enregistrer</button>
             </form>
         </div>
     </div>

@@ -7,6 +7,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from sqlalchemy.orm import Session
 from backend.database import engine, SessionLocal
 from backend.models import Base, ProjectCategory, User
+from backend.auth import get_password_hash
 
 def init_db():
     print("Creating tables...")
@@ -18,7 +19,8 @@ def seed_data():
     print("Seeding Users...")
     admin_user = db.query(User).filter(User.username == "admin").first()
     if not admin_user:
-        admin_user = User(username="admin", role="Administrateur")
+        hashed_password = get_password_hash("admin")
+        admin_user = User(username="admin", hashed_password=hashed_password, role="Administrateur")
         db.add(admin_user)
 
     print("Seeding Project Categories...")

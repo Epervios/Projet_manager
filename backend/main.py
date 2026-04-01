@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 import backend.models as models
 from backend.database import engine
-from backend.routers import api
+from backend.routers import api, auth_router
 
 # Create tables
 models.Base.metadata.create_all(bind=engine)
@@ -20,6 +20,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(auth_router.router)
 app.include_router(api.router)
 app.include_router(api.category_router)
 app.include_router(api.milestone_router)

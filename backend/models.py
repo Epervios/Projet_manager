@@ -8,8 +8,8 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True, nullable=False)
+    hashed_password = Column(String, nullable=False)
     role = Column(String, default="Lecteur") # Administrateur, Éditeur, Lecteur
-    # Add password hash for future if needed
 
 class ProjectCategory(Base):
     __tablename__ = "project_categories"
@@ -55,6 +55,7 @@ class Project(Base):
     meetings = relationship("Meeting", back_populates="project", cascade="all, delete-orphan")
     tasks = relationship("Task", back_populates="project", cascade="all, delete-orphan")
     documents = relationship("Document", back_populates="project", cascade="all, delete-orphan")
+    activity_logs = relationship("ActivityLog", back_populates="project", cascade="all, delete-orphan")
 
 class Milestone(Base):
     __tablename__ = "milestones"
@@ -168,3 +169,5 @@ class ActivityLog(Base):
     action = Column(String, nullable=False)
     details = Column(Text)
     timestamp = Column(DateTime, default=datetime.utcnow)
+
+    project = relationship("Project", back_populates="activity_logs")

@@ -3,17 +3,15 @@
 Une application web interne autonome de suivi de portefeuille projets. Conçue pour être légère, robuste, et exploitable en local ou sur un réseau intranet sans dépendance au cloud.
 
 ## Objectif
-
 Permettre la gestion d'un portefeuille de 30 à 100 projets de façon centralisée. L'application stocke les métadonnées de projets, les jalons, les décisions, les réunions, les tâches, et référence des documents stockés sur un réseau local ou un répertoire de partage.
 
-## Architecture
-
-- **Backend** : Python 3.9+ avec FastAPI et SQLAlchemy. Fournit une API RESTful propre, légère et rapide.
-- **Base de données** : SQLite (fichier local `database/projet_manager.db`) permettant une portabilité et une gestion aisée des sauvegardes.
-- **Frontend** : Vanilla HTML, CSS, JavaScript. Pas de framework lourd. Complètement autonome. L'interface communique avec le backend via l'API REST.
+## Stack Technique
+- **Backend** : Python 3.9+ avec FastAPI, SQLAlchemy, Pydantic, Passlib (Bcrypt), Python-Jose (JWT).
+- **Base de données** : SQLite (fichier local `database/projet_manager.db`).
+- **Frontend** : Vanilla HTML, CSS, JavaScript (avec Fetch API) et UI dynamique.
+- **Sécurité** : JWT stockés en LocalStorage, routes protégées par rôles (`Administrateur`, `Éditeur`, `Lecteur`).
 
 ## Pré-requis
-
 - Python 3.9 ou supérieur
 
 ## Installation et démarrage
@@ -35,6 +33,9 @@ Permettre la gestion d'un portefeuille de 30 à 100 projets de façon centralis�
    ```bash
    python scripts/seed.py
    ```
+   *Ce script va créer la base SQLite, insérer les catégories initiales, et créer l'utilisateur Administrateur par défaut.*
+   - **Utilisateur par défaut** : `admin`
+   - **Mot de passe** : `admin`
 
 5. **Démarrer l'application**
    ```bash
@@ -42,24 +43,24 @@ Permettre la gestion d'un portefeuille de 30 à 100 projets de façon centralis�
    ```
 
 6. **Accéder à l'application**
-   Ouvrez un navigateur et accédez à : [http://localhost:8000](http://localhost:8000)
+   Ouvrez un navigateur et accédez à : [http://localhost:8000](http://localhost:8000). Vous serez redirigé vers `/login.html`.
 
 ## Structure du projet
 
-- `/backend/` : Code de l'API FastAPI, définition des modèles SQLAlchemy et des schémas Pydantic.
+- `/backend/` : Code de l'API FastAPI, définition des modèles SQLAlchemy, authentification et schémas Pydantic.
 - `/frontend/` : Interface utilisateur (fichiers statiques HTML, CSS, JS).
 - `/database/` : Dossier destiné à contenir le fichier SQLite `projet_manager.db`.
-- `/scripts/` : Scripts utilitaires (ex: `seed.py` pour l'initialisation de la DB).
-- `/docs/` : Documentation (ex: Cahier des charges).
+- `/scripts/` : Scripts utilitaires (`seed.py`).
+- `/docs/` : Documentation d'architecture et de modèle de données.
 
-## Utilisation
+## Fonctionnalités Disponibles V1
+- **Authentification Locale** : Login simple avec gestion de rôles.
+- **Tableau de Bord** : Vue synthétique des projets et alertes.
+- **Portefeuille de Projets** : Liste des projets avec recherche texte, filtres multi-critères (statut, priorité, responsable, archivés) et tris dynamiques.
+- **Fiche Projet détaillée** : Vue 360 avec onglets pour Synthèse, Jalons, Décisions, Séances, Tâches, Documents et Historique.
+- **CRUD complet** : Possibilité de créer, éditer et supprimer tous les éléments (si l'on possède les droits Administrateur ou Éditeur).
+- **Historisation** : Journal d'activité minimal consignant les opérations de mise à jour par utilisateur ou "System".
 
-- **Tableau de Bord** : Vue synthétique des projets.
-- **Projets** : Liste des projets. Bouton "+ Nouveau Projet" pour créer.
-- **Fiche Projet** : Cliquez sur une ligne de la liste de projets pour accéder à ses détails, y compris les jalons, décisions, tâches, et documents référencés.
-
-## Évolutions futures
-
-- Authentification via JWT et login des utilisateurs (la table `users` existe déjà dans la DB).
-- Upload de fichiers (si le besoin évolue, pour l'instant seul le chemin est référencé).
-- Vues avancées (ex: timeline de Gantt pour les jalons).
+## Limites Connues de la V1
+- Pas de fonctionnalité native de récupération de mot de passe (à gérer en base de données manuellement pour le moment).
+- Les documents sont référencés par chemin d'accès réseau local (URI/Filepath), il n'y a pas d'upload de fichiers direct dans la base de données afin de la garder légère.

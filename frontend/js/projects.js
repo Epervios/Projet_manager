@@ -8,6 +8,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('search-input').addEventListener('input', renderTable);
     document.getElementById('filter-category').addEventListener('change', renderTable);
     document.getElementById('filter-status').addEventListener('change', renderTable);
+    document.getElementById('filter-priority').addEventListener('change', renderTable);
+    document.getElementById('filter-manager').addEventListener('input', renderTable);
+    document.getElementById('filter-archived').addEventListener('change', renderTable);
+    document.getElementById('sort-by').addEventListener('change', renderTable);
 
     document.getElementById('new-project-form').addEventListener('submit', createProject);
 });
@@ -37,14 +41,39 @@ function renderTable() {
     const searchTerm = document.getElementById('search-input').value.toLowerCase();
     const filterCategory = document.getElementById('filter-category').value;
     const filterStatus = document.getElementById('filter-status').value;
+    const filterPriority = document.getElementById('filter-priority').value;
+    const filterManager = document.getElementById('filter-manager').value.toLowerCase();
+    const showArchived = document.getElementById('filter-archived').checked;
+    const sortBy = document.getElementById('sort-by').value;
 
     tbody.innerHTML = '';
 
-    const filtered = allProjects.filter(p => {
+    let filtered = allProjects.filter(p => {
         const matchesSearch = p.name.toLowerCase().includes(searchTerm) || p.code.toLowerCase().includes(searchTerm);
         const matchesCat = filterCategory === "" || p.category_id.toString() === filterCategory;
         const matchesStatus = filterStatus === "" || p.status === filterStatus;
-        return matchesSearch && matchesCat && matchesStatus;
+        const matchesPriority = filterPriority === "" || p.priority === filterPriority;
+        const matchesManager = filterManager === "" || p.manager.toLowerCase().includes(filterManager);
+        const matchesArchived = showArchived || p.status !== "Archivé";
+
+        return matchesSearch && matchesCat && matchesStatus && matchesPriority && matchesManager && matchesArchived;
+    });
+
+    // Sorting
+    filtered.sort((a, b) => {
+        if(sortBy === 'date_desc') return new Date(b.created_at) - new Date(a.created_at);
+        if(sortBy === 'date_asc') return new Date(a.created_at) - new Date(b.created_at);
+        if(sortBy === 'status') return a.status.localeCompare(b.status);
+        if(sortBy === 'priority') {
+            const pMap = {'Basse': 1, 'Moyenne': 2, 'Haute': 3, 'Critique': 4};
+            return (pMap[b.priority] || 0) - (pMap[a.priority] || 0);
+        }
+        if(sortBy === 'category') {
+            const catA = allCategories.find(c => c.id === a.category_id)?.name || '';
+            const catB = allCategories.find(c => c.id === b.category_id)?.name || '';
+            return catA.localeCompare(catB);
+        }
+        return 0;
     });
 
     if (filtered.length === 0) {
