@@ -127,19 +127,31 @@ async function createProject(e) {
         status: document.getElementById('project-status').value,
         priority: document.getElementById('project-priority').value,
         sponsor: document.getElementById('project-sponsor').value || null,
+        stakeholders: document.getElementById('project-stakeholders').value || null,
+        alert_level: document.getElementById('project-alert').value,
+        progress_percentage: parseFloat(document.getElementById('project-progress').value) || 0,
         start_date: document.getElementById('project-start').value || null,
         target_date: document.getElementById('project-target').value || null,
         description: document.getElementById('project-desc').value || null,
+        objective: document.getElementById('project-obj').value || null,
+        scope: document.getElementById('project-scope').value || null,
+        general_comment: document.getElementById('project-comment').value || null,
     };
 
     try {
-        await fetchAPI('/projects/', {
+        const response = await fetchAPI('/projects/', {
             method: 'POST',
             body: JSON.stringify(payload)
         });
         closeModal('new-project-modal');
         document.getElementById('new-project-form').reset();
-        await loadProjects();
+
+        // Redirect directly to the new project detail view
+        if(response && response.id) {
+            window.location.href = `/project.html?id=${response.id}`;
+        } else {
+            await loadProjects();
+        }
     } catch (err) {
         console.error("Erreur de création", err);
     }

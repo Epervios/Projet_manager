@@ -29,11 +29,11 @@ async function loadProjectDetails() {
 
         // Populate Synthese
         document.getElementById('p-code').textContent = projectData.code;
-        document.getElementById('p-cat').textContent = projectData.category.name;
-        document.getElementById('p-manager').textContent = projectData.manager;
+        document.getElementById('p-cat').textContent = projectData.category ? projectData.category.name : '-';
+        document.getElementById('p-manager').textContent = projectData.manager || '-';
         document.getElementById('p-sponsor').textContent = projectData.sponsor || '-';
-        document.getElementById('p-priority').textContent = projectData.priority;
-        document.getElementById('p-progress').textContent = projectData.progress_percentage;
+        document.getElementById('p-priority').textContent = projectData.priority || '-';
+        document.getElementById('p-progress').textContent = projectData.progress_percentage !== null ? projectData.progress_percentage : '-';
         document.getElementById('p-start').textContent = formatDate(projectData.start_date);
         document.getElementById('p-target').textContent = formatDate(projectData.target_date);
 

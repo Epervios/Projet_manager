@@ -207,6 +207,8 @@ nav ul li a.active, nav ul li a:hover {
     border: 1px solid #888;
     width: 50%;
     border-radius: 8px;
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 .close {
