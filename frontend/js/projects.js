@@ -123,7 +123,13 @@ async function createProject(e) {
         code: document.getElementById('project-code').value,
         name: document.getElementById('project-name').value,
         category_id: parseInt(document.getElementById('project-category').value),
-        manager: document.getElementById('project-manager').value
+        manager: document.getElementById('project-manager').value,
+        status: document.getElementById('project-status').value,
+        priority: document.getElementById('project-priority').value,
+        sponsor: document.getElementById('project-sponsor').value || null,
+        start_date: document.getElementById('project-start').value || null,
+        target_date: document.getElementById('project-target').value || null,
+        description: document.getElementById('project-desc').value || null,
     };
 
     try {

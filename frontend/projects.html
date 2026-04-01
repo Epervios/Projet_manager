@@ -86,23 +86,60 @@
             <span class="close" onclick="closeModal('new-project-modal')">&times;</span>
             <h2>Nouveau Projet</h2>
             <form id="new-project-form">
-                <div class="form-group">
-                    <label>Code (Unique)*</label>
-                    <input type="text" id="project-code" required>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Code (Unique)*</label>
+                        <input type="text" id="project-code" required class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Nom du projet*</label>
+                        <input type="text" id="project-name" required class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Catégorie*</label>
+                        <select id="project-category" required class="form-control"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Responsable*</label>
+                        <input type="text" id="project-manager" required class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Statut*</label>
+                        <select id="project-status" required class="form-control">
+                            <option value="Idée / à initier">Idée / à initier</option>
+                            <option value="En préparation">En préparation</option>
+                            <option value="En cours">En cours</option>
+                            <option value="En attente">En attente</option>
+                            <option value="Bloqué">Bloqué</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Priorité</label>
+                        <select id="project-priority" class="form-control">
+                            <option value="Basse">Basse</option>
+                            <option value="Moyenne" selected>Moyenne</option>
+                            <option value="Haute">Haute</option>
+                            <option value="Critique">Critique</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Sponsor / Mandant</label>
+                        <input type="text" id="project-sponsor" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Date de début</label>
+                        <input type="date" id="project-start" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Date cible</label>
+                        <input type="date" id="project-target" class="form-control">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Nom du projet*</label>
-                    <input type="text" id="project-name" required>
+                <div class="form-group mt-3">
+                    <label>Description synthétique</label>
+                    <textarea id="project-desc" class="form-control" rows="3"></textarea>
                 </div>
-                <div class="form-group">
-                    <label>Catégorie*</label>
-                    <select id="project-category" required></select>
-                </div>
-                <div class="form-group">
-                    <label>Responsable*</label>
-                    <input type="text" id="project-manager" required>
-                </div>
-                <button type="submit" class="btn btn-success">Créer le projet</button>
+                <button type="submit" class="btn btn-success mt-3">Créer le projet</button>
             </form>
         </div>
     </div>
