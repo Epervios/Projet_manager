@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projets - Projet Manager</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <div class="logo">Projet Manager</div>
+        <nav>
+            <ul>
+                <li><a href="/">Tableau de bord</a></li>
+                <li><a href="/projects.html" class="active">Projets</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="page-header">
+            <h1>Portefeuille Projets</h1>
+            <button class="btn btn-primary" onclick="openNewProjectModal()">+ Nouveau Projet</button>
+        </div>
+
+        <div class="filters card">
+            <input type="text" id="search-input" placeholder="Rechercher par nom ou code..." class="form-control">
+            <select id="filter-category" class="form-control">
+                <option value="">Toutes les catégories</option>
+            </select>
+            <select id="filter-status" class="form-control">
+                <option value="">Tous les statuts</option>
+                <option value="Idée / à initier">Idée / à initier</option>
+                <option value="En préparation">En préparation</option>
+                <option value="En cours">En cours</option>
+                <option value="En attente">En attente</option>
+                <option value="Bloqué">Bloqué</option>
+                <option value="Terminé">Terminé</option>
+                <option value="Archivé">Archivé</option>
+                <option value="Abandonné">Abandonné</option>
+            </select>
+        </div>
+
+        <table class="table" id="projects-table">
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Nom</th>
+                    <th>Catégorie</th>
+                    <th>Responsable</th>
+                    <th>Statut</th>
+                    <th>Priorité</th>
+                    <th>Avancement</th>
+                    <th>Alerte</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="8">Chargement...</td></tr>
+            </tbody>
+        </table>
+    </main>
+
+    <!-- Modal Nouveau Projet -->
+    <div id="new-project-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('new-project-modal')">&times;</span>
+            <h2>Nouveau Projet</h2>
+            <form id="new-project-form">
+                <div class="form-group">
+                    <label>Code (Unique)*</label>
+                    <input type="text" id="project-code" required>
+                </div>
+                <div class="form-group">
+                    <label>Nom du projet*</label>
+                    <input type="text" id="project-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Catégorie*</label>
+                    <select id="project-category" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Responsable*</label>
+                    <input type="text" id="project-manager" required>
+                </div>
+                <button type="submit" class="btn btn-success">Créer le projet</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/projects.js"></script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projet Manager</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <div class="logo">Projet Manager</div>
+        <nav>
+            <ul>
+                <li><a href="/" class="active">Tableau de bord</a></li>
+                <li><a href="/projects.html">Projets</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h1>Tableau de bord</h1>
+
+        <div class="dashboard-grid">
+            <div class="card stat-card">
+                <h3>Total Projets</h3>
+                <p id="stat-total-projects" class="stat-number">-</p>
+            </div>
+            <div class="card stat-card alert-red">
+                <h3>Tâches en retard</h3>
+                <p id="stat-overdue-tasks" class="stat-number">-</p>
+            </div>
+            <div class="card stat-card alert-orange">
+                <h3>Jalons à venir</h3>
+                <p id="stat-upcoming-milestones" class="stat-number">-</p>
+            </div>
+        </div>
+
+        <div class="dashboard-details">
+            <div class="card">
+                <h3>Projets par Catégorie</h3>
+                <ul id="list-categories" class="list-group">
+                    <li>Chargement...</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>Dernières Décisions</h3>
+                <ul id="list-decisions" class="list-group">
+                    <li>Chargement...</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>

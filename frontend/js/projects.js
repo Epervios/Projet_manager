@@ -1,0 +1,111 @@
+let allProjects = [];
+let allCategories = [];
+
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadCategories();
+    await loadProjects();
+
+    document.getElementById('search-input').addEventListener('input', renderTable);
+    document.getElementById('filter-category').addEventListener('change', renderTable);
+    document.getElementById('filter-status').addEventListener('change', renderTable);
+
+    document.getElementById('new-project-form').addEventListener('submit', createProject);
+});
+
+async function loadCategories() {
+    allCategories = await fetchAPI('/categories');
+    const selectFilter = document.getElementById('filter-category');
+    const selectModal = document.getElementById('project-category');
+
+    selectFilter.innerHTML = '<option value="">Toutes les catégories</option>';
+    selectModal.innerHTML = '';
+
+    allCategories.forEach(cat => {
+        const opt = new Option(cat.name, cat.id);
+        selectFilter.add(opt);
+        selectModal.add(new Option(cat.name, cat.id));
+    });
+}
+
+async function loadProjects() {
+    allProjects = await fetchAPI('/projects');
+    renderTable();
+}
+
+function renderTable() {
+    const tbody = document.querySelector('#projects-table tbody');
+    const searchTerm = document.getElementById('search-input').value.toLowerCase();
+    const filterCategory = document.getElementById('filter-category').value;
+    const filterStatus = document.getElementById('filter-status').value;
+
+    tbody.innerHTML = '';
+
+    const filtered = allProjects.filter(p => {
+        const matchesSearch = p.name.toLowerCase().includes(searchTerm) || p.code.toLowerCase().includes(searchTerm);
+        const matchesCat = filterCategory === "" || p.category_id.toString() === filterCategory;
+        const matchesStatus = filterStatus === "" || p.status === filterStatus;
+        return matchesSearch && matchesCat && matchesStatus;
+    });
+
+    if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Aucun projet trouvé</td></tr>';
+        return;
+    }
+
+    filtered.forEach(p => {
+        const categoryName = allCategories.find(c => c.id === p.category_id)?.name || 'Inconnue';
+
+        const tr = document.createElement('tr');
+        tr.onclick = () => window.location.href = `/project.html?id=${p.id}`;
+
+        tr.innerHTML = `
+            <td><strong>${p.code}</strong></td>
+            <td>${p.name}</td>
+            <td>${categoryName}</td>
+            <td>${p.manager}</td>
+            <td><span class="badge badge-status">${p.status}</span></td>
+            <td>${p.priority}</td>
+            <td>
+                <div style="background:#e9ecef; border-radius:10px; height:8px; width:100%;">
+                    <div style="background:var(--primary-color); height:8px; border-radius:10px; width:${p.progress_percentage}%"></div>
+                </div>
+                <small>${p.progress_percentage}%</small>
+            </td>
+            <td><span style="display:inline-block; width:12px; height:12px; border-radius:50%; background-color:${getAlertColor(p.alert_level)}"></span></td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+function getAlertColor(alert) {
+    if (alert === 'Vert') return 'var(--success-color)';
+    if (alert === 'Orange') return 'var(--warning-color)';
+    if (alert === 'Rouge') return 'var(--danger-color)';
+    return 'var(--secondary-color)';
+}
+
+function openNewProjectModal() {
+    openModal('new-project-modal');
+}
+
+async function createProject(e) {
+    e.preventDefault();
+    const payload = {
+        code: document.getElementById('project-code').value,
+        name: document.getElementById('project-name').value,
+        category_id: parseInt(document.getElementById('project-category').value),
+        manager: document.getElementById('project-manager').value
+    };
+
+    try {
+        await fetchAPI('/projects/', {
+            method: 'POST',
+            body: JSON.stringify(payload)
+        });
+        closeModal('new-project-modal');
+        document.getElementById('new-project-form').reset();
+        await loadProjects();
+    } catch (err) {
+        console.error("Erreur de création", err);
+    }
+}
