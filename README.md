@@ -22,47 +22,23 @@ L'application permet de centraliser et d'historiser le suivi de projets :
 
 ## Installation et démarrage sous Windows
 
-Cette procédure est optimisée pour les environnements Windows d'entreprise verrouillés (où l'exécution de scripts PowerShell comme `Activate.ps1` peut être bloquée). Ouvrez **PowerShell** et suivez ces instructions :
+Cette procédure est optimisée pour les environnements Windows d'entreprise verrouillés (où l'exécution de scripts PowerShell comme `Activate.ps1` peut être bloquée). Ouvrez **PowerShell** et lancez les commandes suivantes :
 
-1. **Cloner ou télécharger le dépôt**
-   ```powershell
-   git clone <url_du_repo>
-   cd Projet_manager
-   ```
+```powershell
+cd C:\Projet_Manager
+python -m venv venv
+venv\Scripts\python.exe -m pip install -r requirements.txt
+venv\Scripts\python.exe scripts\seed.py
+$env:PYTHONPATH="."
+venv\Scripts\python.exe -m uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
+```
 
-2. **Créer un environnement virtuel**
-   ```powershell
-   python -m venv venv
-   ```
+*Note : Le script de base de données (seed.py) créera la base initiale et un utilisateur administrateur de secours (`admin` / `admin`).*
 
-3. **Installer les dépendances requises**
-   Utilisez directement l'exécutable Python de l'environnement virtuel pour éviter les problèmes de droits :
-   ```powershell
-   venv\Scripts\python.exe -m pip install -r requirements.txt
-   ```
+Puis accès via :
+**[http://localhost:8000](http://localhost:8000)**
 
-4. **Initialiser la base de données par défaut**
-   ```powershell
-   venv\Scripts\python.exe scripts\seed.py
-   ```
-   *Ce script va créer la base SQLite initiale dans `database\projet_manager.db`, y insérer les catégories de base, et générer l'utilisateur administrateur de secours.*
-   - **Utilisateur par défaut** : `admin`
-   - **Mot de passe** : `admin`
-
-5. **Démarrer le serveur API (Backend)**
-   Le frontend est servi directement par FastAPI. Assurez-vous de définir le PYTHONPATH avant de lancer uvicorn :
-   ```powershell
-   $env:PYTHONPATH="."
-   venv\Scripts\python.exe -m uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
-   ```
-
-6. **Accéder à l'application**
-   Une fois le serveur démarré, ouvrez votre navigateur web et accédez à l'URL suivante :
-   **[http://localhost:8000](http://localhost:8000)**
-
-   Vous serez automatiquement redirigé vers la page de connexion.
-
-*(Note : Si vous disposez des droits nécessaires et préférez activer l'environnement virtuellement de façon standard, vous pouvez toujours utiliser `.\venv\Scripts\Activate.ps1` puis omettre le préfixe `venv\Scripts\` pour les commandes suivantes).*
+*(Note : Si vous disposez des droits nécessaires et préférez activer l'environnement de façon standard, vous pouvez utiliser `.\venv\Scripts\Activate.ps1` puis omettre le préfixe `venv\Scripts\` pour les commandes suivantes).*
 
 ## Configuration & Base de Données
 
