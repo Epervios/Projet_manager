@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     try {
-        const config = await fetchAPI('/settings/db');
+        const config = await fetchAPI('/settings/db/');
         document.getElementById('db-path').value = config.path;
     } catch (err) {
         showAlert(err.message, 'danger');
@@ -27,7 +27,7 @@ function showAlert(message, type) {
 async function testConnection() {
     const path = document.getElementById('db-path').value;
     try {
-        const res = await fetchAPI('/settings/db/test', {
+        const res = await fetchAPI('/settings/db/test/', {
             method: 'POST',
             body: JSON.stringify({ path: path })
         });
@@ -44,7 +44,7 @@ async function initializeDB() {
     }
 
     try {
-        const res = await fetchAPI('/settings/db/init', {
+        const res = await fetchAPI('/settings/db/init/', {
             method: 'POST',
             body: JSON.stringify({ path: path })
         });
@@ -59,7 +59,7 @@ document.getElementById('db-settings-form').addEventListener('submit', async (e)
     const path = document.getElementById('db-path').value;
 
     try {
-        const res = await fetchAPI('/settings/db', {
+        const res = await fetchAPI('/settings/db/', {
             method: 'PUT',
             body: JSON.stringify({ path: path })
         });

@@ -80,9 +80,10 @@ function renderProjectRoadmap() {
 
     let ganttTasks = [];
 
-    if (filter === 'all' || filter === 'tasks') {
+    if (filter === 'all' || filter === 'tasks' || filter === 'hide_completed') {
         projectData.tasks.forEach(t => {
             if(!t.due_date) return; // Need at least an end date
+            if (filter === 'hide_completed' && t.status === 'Terminée') return;
 
             // Generate pseudo start date if missing
             const start = t.created_at ? t.created_at.split('T')[0] : t.due_date;
@@ -105,9 +106,10 @@ function renderProjectRoadmap() {
         });
     }
 
-    if (filter === 'all' || filter === 'milestones') {
+    if (filter === 'all' || filter === 'milestones' || filter === 'hide_completed') {
         projectData.milestones.forEach(m => {
             if(!m.planned_date) return;
+            if (filter === 'hide_completed' && m.status === 'Réalisé') return;
             ganttTasks.push({
                 id: `Milestone_${m.id}`,
                 name: m.title,
@@ -143,12 +145,26 @@ function renderProjectRoadmap() {
         padding: 18,
         view_mode: zoomLevel,
         date_format: 'YYYY-MM-DD',
+        on_click: function (task) {
+            if (checkAccess(['Administrateur', 'Éditeur'])) {
+                if (task.id.startsWith('Task_')) {
+                    const taskId = parseInt(task.id.replace('Task_', ''));
+                    const t = projectData.tasks.find(x => x.id === taskId);
+                    if(t) editTask(t);
+                } else if (task.id.startsWith('Milestone_')) {
+                    const mId = parseInt(task.id.replace('Milestone_', ''));
+                    const m = projectData.milestones.find(x => x.id === mId);
+                    if(m) editMilestone(m);
+                }
+            }
+        },
         custom_popup_html: function(task) {
             const end_date = task.end;
             return `<div class="details-container">
-                      <h5>${task.name}</h5>
+                      <h5>${escapeHTML(task.name)}</h5>
                       <p>Échéance: ${end_date}</p>
                       <p>${task.progress}% terminé</p>
+                      ${checkAccess(['Administrateur', 'Éditeur']) ? '<p style="color:var(--primary-color); margin-top:5px; cursor:pointer;">Cliquer pour éditer ↗</p>' : ''}
                     </div>`;
         }
     });
