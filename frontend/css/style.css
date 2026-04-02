@@ -237,6 +237,8 @@ nav ul li a.active, nav ul li a:hover {
 .gantt .bar-success .bar { fill: var(--success-color); }
 .gantt .bar-danger .bar { fill: var(--danger-color); }
 .gantt .bar-milestone .bar { fill: var(--warning-color); }
+.gantt .bar-wrapper.bar-milestone-global .bar { fill: #8e44ad; }
+.gantt .bar-wrapper.bar-milestone-success .bar { fill: #27ae60; }
 
 .details-container { background: #fff; padding: 10px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
 .details-container h5 { margin: 0 0 5px 0; color: var(--dark-color); }
