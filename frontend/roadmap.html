@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roadmap Globale - Projet Manager</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- Frappe Gantt -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.6.1/frappe-gantt.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.6.1/frappe-gantt.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="logo">Projet Manager</div>
+        <nav>
+            <ul>
+                <li><a href="/">Tableau de bord</a></li>
+                <li><a href="/projects.html">Projets</a></li>
+                <li><a href="/roadmap.html" class="active">Roadmap Globale</a></li>
+                <li><a href="/settings.html" class="admin-only">Paramètres</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="page-header">
+            <h1>Roadmap Portefeuille</h1>
+            <button class="btn btn-secondary" onclick="window.location.href='/projects.html'">Voir la liste</button>
+        </div>
+
+        <div class="filters card grid-2" style="grid-template-columns: repeat(4, 1fr);">
+            <select id="filter-category" class="form-control">
+                <option value="">Toutes les catégories</option>
+            </select>
+            <select id="filter-status" class="form-control">
+                <option value="">Tous les statuts</option>
+                <option value="Idée / à initier">Idée / à initier</option>
+                <option value="En préparation">En préparation</option>
+                <option value="En cours">En cours</option>
+                <option value="En attente">En attente</option>
+                <option value="Bloqué">Bloqué</option>
+                <option value="Terminé">Terminé</option>
+            </select>
+            <select id="filter-priority" class="form-control">
+                <option value="">Toutes priorités</option>
+                <option value="Basse">Basse</option>
+                <option value="Moyenne">Moyenne</option>
+                <option value="Haute">Haute</option>
+                <option value="Critique">Critique</option>
+            </select>
+            <select id="gantt-zoom" class="form-control" onchange="changeGanttZoom(this.value)">
+                <option value="Week">Vue: Semaine</option>
+                <option value="Month" selected>Vue: Mois</option>
+            </select>
+        </div>
+
+        <div class="card">
+            <div id="gantt-container" style="overflow-x: auto; min-height: 400px; padding-bottom: 20px;">
+                <p style="text-align:center; padding: 20px;">Chargement du planning...</p>
+            </div>
+
+            <div style="margin-top: 15px; font-size: 0.9em; display:flex; gap: 15px; justify-content:center;">
+                <span style="border-left: 10px solid var(--primary-color); padding-left: 5px;">Projet normal</span>
+                <span style="border-left: 10px solid var(--danger-color); padding-left: 5px;">Projet en alerte rouge</span>
+                <span style="border-left: 10px solid var(--warning-color); padding-left: 5px;">Projet en alerte orange</span>
+                <span style="border-left: 10px solid var(--success-color); padding-left: 5px;">Projet terminé</span>
+            </div>
+            <p style="text-align:center; font-size:0.8em; color:var(--secondary-color); margin-top:10px;">Cliquez sur la barre d'un projet pour ouvrir sa fiche détaillée.</p>
+        </div>
+    </main>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/roadmap.js"></script>
+</body>
+</html>

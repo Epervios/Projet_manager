@@ -3,7 +3,9 @@ from typing import Optional
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
-SECRET_KEY = "SUPER_SECRET_KEY_FOR_LOCAL_DEV"  # In production, use env variable
+import os
+
+SECRET_KEY = os.environ.get("SECRET_KEY", "SUPER_SECRET_KEY_FOR_LOCAL_DEV")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 1 week
 

@@ -232,6 +232,16 @@ nav ul li a.active, nav ul li a:hover {
 
 .mt-3 { margin-top: 1rem; }
 
+/* Gantt Custom Styling */
+.gantt .bar-task .bar { fill: var(--primary-color); }
+.gantt .bar-success .bar { fill: var(--success-color); }
+.gantt .bar-danger .bar { fill: var(--danger-color); }
+.gantt .bar-milestone .bar { fill: var(--warning-color); }
+
+.details-container { background: #fff; padding: 10px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+.details-container h5 { margin: 0 0 5px 0; color: var(--dark-color); }
+.details-container p { margin: 0; color: var(--secondary-color); font-size: 12px; }
+
 /* Tabs */
 .tabs {
     overflow: hidden;

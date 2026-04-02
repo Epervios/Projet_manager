@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paramètres - Projet Manager</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .settings-card { max-width: 600px; margin: auto; }
+        .alert { padding: 1rem; border-radius: 5px; margin-bottom: 1rem; display: none; }
+        .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-danger { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Projet Manager</div>
+        <nav>
+            <ul>
+                <li><a href="/">Tableau de bord</a></li>
+                <li><a href="/projects.html">Projets</a></li>
+                <li><a href="/roadmap.html">Roadmap Globale</a></li>
+                <li><a href="/settings.html" class="active admin-only">Paramètres</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="card settings-card">
+            <h2>Paramètres de la Base de Données (SQLite)</h2>
+
+            <div id="alert-msg" class="alert"></div>
+
+            <form id="db-settings-form">
+                <div class="form-group">
+                    <label>Chemin de la base de données locale</label>
+                    <input type="text" id="db-path" class="form-control" placeholder="ex: ./database/projet_manager.db" required>
+                    <small style="color: var(--secondary-color)">Le chemin doit être accessible par le serveur backend en lecture et écriture.</small>
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                    <button type="button" class="btn btn-secondary" onclick="testConnection()">Tester Connexion</button>
+                    <button type="button" class="btn btn-info" onclick="initializeDB()" style="background-color: var(--info-color); color: white;">Initialiser Base</button>
+                    <button type="submit" class="btn btn-primary" style="margin-left: auto;">Sauvegarder</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/settings.js"></script>
+</body>
+</html>

@@ -62,6 +62,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const userName = localStorage.getItem('user_name') || 'User';
             const userRole = localStorage.getItem('user_role') || 'Lecteur';
 
+            // Hide Admin-only links if not admin
+            if (userRole !== 'Administrateur') {
+                document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
+            }
+
             const userInfo = document.createElement('div');
             userInfo.style.marginLeft = 'auto';
             userInfo.style.display = 'flex';
@@ -91,6 +96,19 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Utility functions for Modals
+function escapeHTML(str) {
+    if (typeof str !== 'string') return str;
+    return str.replace(/[&<>'"]/g,
+        tag => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            "'": '&#39;',
+            '"': '&quot;'
+        }[tag] || tag)
+    );
+}
+
 function openModal(id) {
     document.getElementById(id).style.display = "block";
 }

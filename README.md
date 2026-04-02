@@ -57,8 +57,10 @@ Permettre la gestion d'un portefeuille de 30 à 100 projets de façon centralis�
 - **Authentification Locale** : Login simple avec gestion de rôles.
 - **Tableau de Bord** : Vue synthétique des projets et alertes.
 - **Portefeuille de Projets** : Liste des projets avec recherche texte, filtres multi-critères (statut, priorité, responsable, archivés) et tris dynamiques.
-- **Fiche Projet détaillée** : Vue 360 avec onglets pour Synthèse, Jalons, Décisions, Séances, Tâches, Documents et Historique.
+- **Roadmap Globale & Projet** : Vue Gantt globale de l'ensemble du portefeuille, et vue Gantt au niveau de la fiche projet intégrant les tâches et les jalons (avec zoom Jour/Semaine/Mois).
+- **Fiche Projet détaillée** : Vue 360 avec onglets pour Synthèse, Roadmap, Jalons, Décisions, Séances, Tâches, Documents et Historique.
 - **CRUD complet** : Possibilité de créer, éditer et supprimer tous les éléments (si l'on possède les droits Administrateur ou Éditeur).
+- **Paramètres de configuration** : Modification dynamique du chemin de la base de données (réservé aux administrateurs).
 - **Historisation** : Journal d'activité minimal consignant les opérations de mise à jour par utilisateur ou "System".
 
 ## Limites Connues de la V1

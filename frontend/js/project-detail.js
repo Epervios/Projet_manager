@@ -65,8 +65,98 @@ async function loadProjectDetails() {
         renderTasks();
         renderDocuments();
         renderHistory();
+        renderProjectRoadmap();
     } catch (e) {
         console.error("Error loading project details", e);
+    }
+}
+
+let ganttChart = null;
+
+function renderProjectRoadmap() {
+    const container = document.getElementById('gantt-container');
+    const filter = document.getElementById('gantt-filter').value;
+    container.innerHTML = '';
+
+    let ganttTasks = [];
+
+    if (filter === 'all' || filter === 'tasks') {
+        projectData.tasks.forEach(t => {
+            if(!t.due_date) return; // Need at least an end date
+
+            // Generate pseudo start date if missing
+            const start = t.created_at ? t.created_at.split('T')[0] : t.due_date;
+            const end = t.due_date;
+
+            let customClass = 'bar-task';
+            if (t.status === 'Terminée') customClass = 'bar-success';
+            else if (new Date(end) < new Date()) customClass = 'bar-danger';
+
+            const progress = t.status === 'Terminée' ? 100 : (t.status === 'En cours' ? 50 : 0);
+
+            ganttTasks.push({
+                id: `Task_${t.id}`,
+                name: `${t.title} (${t.assignee || 'Non assigné'})`,
+                start: start,
+                end: end,
+                progress: progress,
+                custom_class: customClass
+            });
+        });
+    }
+
+    if (filter === 'all' || filter === 'milestones') {
+        projectData.milestones.forEach(m => {
+            if(!m.planned_date) return;
+            ganttTasks.push({
+                id: `Milestone_${m.id}`,
+                name: m.title,
+                start: m.planned_date,
+                end: m.planned_date,
+                progress: m.status === 'Réalisé' ? 100 : 0,
+                custom_class: 'bar-milestone',
+                dependencies: ''
+            });
+        });
+    }
+
+    if (ganttTasks.length === 0) {
+        container.innerHTML = '<p style="text-align:center; padding: 20px;">Aucune donnée (avec dates) à afficher sur la roadmap.</p>';
+        return;
+    }
+
+    // Create new wrapper
+    const svgWrapper = document.createElement('svg');
+    svgWrapper.id = "gantt-svg";
+    container.appendChild(svgWrapper);
+
+    const zoomLevel = document.getElementById('gantt-zoom').value;
+
+    ganttChart = new Gantt("#gantt-svg", ganttTasks, {
+        header_height: 50,
+        column_width: 30,
+        step: 24,
+        view_modes: ['Quarter Day', 'Half Day', 'Day', 'Week', 'Month'],
+        bar_height: 20,
+        bar_corner_radius: 3,
+        arrow_curve: 5,
+        padding: 18,
+        view_mode: zoomLevel,
+        date_format: 'YYYY-MM-DD',
+        custom_popup_html: function(task) {
+            const end_date = task.end;
+            return `<div class="details-container">
+                      <h5>${task.name}</h5>
+                      <p>Échéance: ${end_date}</p>
+                      <p>${task.progress}% terminé</p>
+                    </div>`;
+        }
+    });
+}
+
+function changeGanttZoom(mode) {
+    if (ganttChart) {
+        ganttChart.change_view_mode(mode);
     }
 }
 
@@ -93,7 +183,7 @@ function renderMilestones() {
         const actions = checkAccess(['Administrateur', 'Éditeur']) ?
             `<button onclick='editMilestone(${JSON.stringify(m).replace(/'/g, "&apos;")})' class="btn btn-sm btn-secondary">Editer</button>
              <button onclick='deleteEntity("milestones", ${m.id})' class="btn btn-sm btn-danger">Suppr</button>` : '';
-        tbody.innerHTML += `<tr ${rowClass}><td>${m.title}</td><td>${formatDate(m.planned_date)}</td><td>${m.status}</td><td>${actions}</td></tr>`;
+        tbody.innerHTML += `<tr ${rowClass}><td>${escapeHTML(m.title)}</td><td>${formatDate(m.planned_date)}</td><td>${escapeHTML(m.status)}</td><td>${actions}</td></tr>`;
     });
 }
 
@@ -105,7 +195,7 @@ function renderDecisions() {
         const actions = checkAccess(['Administrateur', 'Éditeur']) ?
             `<button onclick='editDecision(${JSON.stringify(d).replace(/'/g, "&apos;")})' class="btn btn-sm btn-secondary">Editer</button>
              <button onclick='deleteEntity("decisions", ${d.id})' class="btn btn-sm btn-danger">Suppr</button>` : '';
-        tbody.innerHTML += `<tr><td>${formatDate(d.decision_date)}</td><td>${d.title}</td><td>${d.decider || '-'}</td><td>${d.implementation_status}</td><td>${actions}</td></tr>`;
+        tbody.innerHTML += `<tr><td>${formatDate(d.decision_date)}</td><td>${escapeHTML(d.title)}</td><td>${escapeHTML(d.decider || '-')}</td><td>${escapeHTML(d.implementation_status)}</td><td>${actions}</td></tr>`;
     });
 }
 
@@ -117,7 +207,7 @@ function renderMeetings() {
         const actions = checkAccess(['Administrateur', 'Éditeur']) ?
             `<button onclick='editMeeting(${JSON.stringify(m).replace(/'/g, "&apos;")})' class="btn btn-sm btn-secondary">Editer</button>
              <button onclick='deleteEntity("meetings", ${m.id})' class="btn btn-sm btn-danger">Suppr</button>` : '';
-        tbody.innerHTML += `<tr><td>${formatDate(m.date)}</td><td>${m.time || '-'}</td><td>${m.title}</td><td>${m.meeting_type || '-'}</td><td>${actions}</td></tr>`;
+        tbody.innerHTML += `<tr><td>${formatDate(m.date)}</td><td>${escapeHTML(m.time || '-')}</td><td>${escapeHTML(m.title)}</td><td>${escapeHTML(m.meeting_type || '-')}</td><td>${actions}</td></tr>`;
     });
 }
 
@@ -131,7 +221,7 @@ function renderTasks() {
         const actions = checkAccess(['Administrateur', 'Éditeur']) ?
             `<button onclick='editTask(${JSON.stringify(t).replace(/'/g, "&apos;")})' class="btn btn-sm btn-secondary">Editer</button>
              <button onclick='deleteEntity("tasks", ${t.id})' class="btn btn-sm btn-danger">Suppr</button>` : '';
-        tbody.innerHTML += `<tr ${rowClass}><td>${t.title}</td><td>${t.assignee || '-'}</td><td>${formatDate(t.due_date)}</td><td>${t.status}</td><td>${actions}</td></tr>`;
+        tbody.innerHTML += `<tr ${rowClass}><td>${escapeHTML(t.title)}</td><td>${escapeHTML(t.assignee || '-')}</td><td>${formatDate(t.due_date)}</td><td>${escapeHTML(t.status)}</td><td>${actions}</td></tr>`;
     });
 }
 
@@ -143,7 +233,7 @@ function renderDocuments() {
         const actions = checkAccess(['Administrateur', 'Éditeur']) ?
             `<button onclick='editDocument(${JSON.stringify(d).replace(/'/g, "&apos;")})' class="btn btn-sm btn-secondary">Editer</button>
              <button onclick='deleteEntity("documents", ${d.id})' class="btn btn-sm btn-danger">Suppr</button>` : '';
-        tbody.innerHTML += `<tr><td>${d.title}</td><td>${d.document_type || '-'}</td><td><a href="${d.file_path}" target="_blank">${d.file_path}</a></td><td>${actions}</td></tr>`;
+        tbody.innerHTML += `<tr><td>${escapeHTML(d.title)}</td><td>${escapeHTML(d.document_type || '-')}</td><td><a href="${escapeHTML(d.file_path)}" target="_blank">${escapeHTML(d.file_path)}</a></td><td>${actions}</td></tr>`;
     });
 }
 
@@ -154,7 +244,7 @@ function renderHistory() {
 
     const sorted = [...projectData.activity_logs].sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
     sorted.forEach(log => {
-        tbody.innerHTML += `<tr><td>${new Date(log.timestamp).toLocaleString('fr-FR')}</td><td>${log.user || 'System'}</td><td>${log.action}</td><td>${log.details || '-'}</td></tr>`;
+        tbody.innerHTML += `<tr><td>${new Date(log.timestamp).toLocaleString('fr-FR')}</td><td>${escapeHTML(log.user || 'System')}</td><td>${escapeHTML(log.action)}</td><td>${escapeHTML(log.details || '-')}</td></tr>`;
     });
 }
 

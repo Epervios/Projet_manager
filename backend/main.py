@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 import backend.models as models
 from backend.database import engine
-from backend.routers import api, auth_router
+from backend.routers import api, auth_router, settings_router
 
 # Create tables
 models.Base.metadata.create_all(bind=engine)
@@ -29,6 +29,7 @@ app.include_router(api.decision_router)
 app.include_router(api.task_router)
 app.include_router(api.document_router)
 app.include_router(api.dashboard_router)
+app.include_router(settings_router.settings_router)
 
 @app.get("/api/ping")
 def ping():

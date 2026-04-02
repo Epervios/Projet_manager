@@ -88,19 +88,19 @@ function renderTable() {
         tr.onclick = () => window.location.href = `/project.html?id=${p.id}`;
 
         tr.innerHTML = `
-            <td><strong>${p.code}</strong></td>
-            <td>${p.name}</td>
-            <td>${categoryName}</td>
-            <td>${p.manager}</td>
-            <td><span class="badge badge-status">${p.status}</span></td>
-            <td>${p.priority}</td>
+            <td><strong>${escapeHTML(p.code)}</strong></td>
+            <td>${escapeHTML(p.name)}</td>
+            <td>${escapeHTML(categoryName)}</td>
+            <td>${escapeHTML(p.manager)}</td>
+            <td><span class="badge badge-status">${escapeHTML(p.status)}</span></td>
+            <td>${escapeHTML(p.priority)}</td>
             <td>
                 <div style="background:#e9ecef; border-radius:10px; height:8px; width:100%;">
                     <div style="background:var(--primary-color); height:8px; border-radius:10px; width:${p.progress_percentage}%"></div>
                 </div>
                 <small>${p.progress_percentage}%</small>
             </td>
-            <td><span style="display:inline-block; width:12px; height:12px; border-radius:50%; background-color:${getAlertColor(p.alert_level)}"></span></td>
+            <td><span style="display:inline-block; width:12px; height:12px; border-radius:50%; background-color:${escapeHTML(getAlertColor(p.alert_level))}"></span></td>
         `;
         tbody.appendChild(tr);
     });

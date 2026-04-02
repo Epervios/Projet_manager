@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         catList.innerHTML = '';
         for (const [category, count] of Object.entries(stats.projects_by_category)) {
             const li = document.createElement('li');
-            li.innerHTML = `<span>${category}</span> <strong>${count}</strong>`;
+            li.innerHTML = `<span>${escapeHTML(category)}</span> <strong>${count}</strong>`;
             catList.appendChild(li);
         }
 
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         } else {
             stats.recent_decisions.forEach(dec => {
                 const li = document.createElement('li');
-                li.innerHTML = `<span>${dec.title}</span> <small>${formatDate(dec.decision_date)}</small>`;
+                li.innerHTML = `<span>${escapeHTML(dec.title)}</span> <small>${formatDate(dec.decision_date)}</small>`;
                 decList.appendChild(li);
             });
         }
