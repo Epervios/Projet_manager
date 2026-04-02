@@ -28,7 +28,7 @@
             <button class="btn btn-secondary" onclick="window.location.href='/projects.html'">Voir la liste</button>
         </div>
 
-        <div class="filters card grid-2" style="grid-template-columns: repeat(5, 1fr);">
+        <div class="filters card grid-2" style="grid-template-columns: repeat(4, 1fr); gap: 15px;">
             <select id="filter-category" class="form-control">
                 <option value="">Toutes les catégories</option>
             </select>
@@ -48,14 +48,22 @@
                 <option value="Haute">Haute</option>
                 <option value="Critique">Critique</option>
             </select>
+            <input type="text" id="filter-manager" class="form-control" placeholder="Rechercher par responsable..." oninput="renderRoadmap()">
+
+            <div style="display:flex; align-items:center;">
+                <input type="checkbox" id="filter-archived" style="margin-right:8px;" onchange="renderRoadmap()">
+                <label for="filter-archived" style="margin:0;">Inclure projets archivés/abandonnés</label>
+            </div>
+
             <select id="filter-display" class="form-control" onchange="renderRoadmap()">
-                <option value="projects">Projets seuls</option>
-                <option value="projects_milestones" selected>Projets + Jalons</option>
+                <option value="projects">Affichage: Projets seuls</option>
+                <option value="projects_milestones" selected>Affichage: Projets + Jalons</option>
             </select>
+
             <select id="gantt-zoom" class="form-control" onchange="changeGanttZoom(this.value)">
-                <option value="Week">Vue: Semaine</option>
-                <option value="Month" selected>Vue: Mois</option>
-                <option value="Year">Vue: Trimestre/Année</option>
+                <option value="Week">Zoom: Semaine</option>
+                <option value="Month" selected>Zoom: Mois</option>
+                <option value="Year">Zoom: Trimestre/Année</option>
             </select>
         </div>
 

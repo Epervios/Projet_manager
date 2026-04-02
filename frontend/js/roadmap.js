@@ -35,6 +35,8 @@ function renderRoadmap() {
     const filterCategory = document.getElementById('filter-category').value;
     const filterStatus = document.getElementById('filter-status').value;
     const filterPriority = document.getElementById('filter-priority').value;
+    const filterManager = document.getElementById('filter-manager').value.toLowerCase();
+    const showArchived = document.getElementById('filter-archived').checked;
     const filterDisplay = document.getElementById('filter-display').value;
 
     container.innerHTML = '';
@@ -43,12 +45,13 @@ function renderRoadmap() {
         const matchesCat = filterCategory === "" || p.category_id.toString() === filterCategory;
         const matchesStatus = filterStatus === "" || p.status === filterStatus;
         const matchesPriority = filterPriority === "" || p.priority === filterPriority;
-        const matchesArchived = p.status !== "Archivé" && p.status !== "Abandonné";
+        const matchesManager = filterManager === "" || (p.manager && p.manager.toLowerCase().includes(filterManager));
+        const matchesArchived = showArchived || (p.status !== "Archivé" && p.status !== "Abandonné");
 
         // We also need dates to plot them on a Gantt chart.
         const hasDates = p.start_date && p.target_date;
 
-        return matchesCat && matchesStatus && matchesPriority && matchesArchived && hasDates;
+        return matchesCat && matchesStatus && matchesPriority && matchesManager && matchesArchived && hasDates;
     });
 
     if (filtered.length === 0) {
