@@ -19,7 +19,7 @@
     </style>
 </head>
 <body>
-    <div class="login-container">
+    <div class="login-container" id="main-login-container" style="display:none;">
         <h2>Projet Manager</h2>
         <div id="error-msg" class="error-msg">Identifiants incorrects</div>
         <form id="login-form">
@@ -35,7 +35,145 @@
         </form>
     </div>
 
+    <div class="login-container" id="setup-container" style="display:none; max-width: 500px;">
+        <h2>Configuration Initiale</h2>
+        <p style="text-align: center; margin-bottom: 20px;">Aucune base de données valide n'a été trouvée. Veuillez configurer l'application.</p>
+
+        <div id="setup-error-msg" class="error-msg"></div>
+        <div id="setup-success-msg" class="alert alert-success" style="display:none; text-align:center; margin-bottom:1rem; padding:10px; background:#d4edda; color:#155724; border-radius:4px;"></div>
+
+        <div class="tabs" style="display:flex; margin-bottom:15px;">
+            <button class="tablink active" onclick="openSetupTab(event, 'Setup-Existing')" style="flex:1;">Base Existante</button>
+            <button class="tablink" onclick="openSetupTab(event, 'Setup-New')" style="flex:1;">Nouvelle Base</button>
+        </div>
+
+        <div id="Setup-Existing" class="tabcontent" style="display: block;">
+            <form id="setup-existing-form">
+                <div class="form-group">
+                    <label>Chemin de la base SQLite existante</label>
+                    <input type="text" id="existing-db-path" class="form-control" placeholder="ex: ./database/projet_manager.db" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Connecter la base</button>
+            </form>
+        </div>
+
+        <div id="Setup-New" class="tabcontent" style="display: none;">
+            <form id="setup-new-form">
+                <div class="form-group">
+                    <label>Chemin pour la nouvelle base</label>
+                    <input type="text" id="new-db-path" class="form-control" value="./database/projet_manager.db" required>
+                </div>
+                <hr style="margin:15px 0;">
+                <h4 style="margin-bottom:10px;">Administrateur Initial</h4>
+                <div class="form-group">
+                    <label>Nom d'utilisateur administrateur</label>
+                    <input type="text" id="new-admin-user" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Mot de passe</label>
+                    <input type="password" id="new-admin-pwd" class="form-control" required minlength="4">
+                </div>
+                <div class="form-group">
+                    <label>Confirmer le mot de passe</label>
+                    <input type="password" id="new-admin-pwd-confirm" class="form-control" required minlength="4">
+                </div>
+                <button type="submit" class="btn btn-success" style="width: 100%;">Créer et Initialiser</button>
+            </form>
+        </div>
+    </div>
+
     <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const res = await fetch('/api/system/status/');
+                const data = await res.json();
+                if (data.status === 'ok') {
+                    document.getElementById('main-login-container').style.display = 'block';
+                } else {
+                    document.getElementById('setup-container').style.display = 'block';
+                }
+            } catch (err) {
+                console.error("System check failed", err);
+                document.getElementById('setup-container').style.display = 'block';
+            }
+        });
+
+        function openSetupTab(evt, tabName) {
+            let i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablink");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+            document.getElementById('setup-error-msg').style.display = 'none';
+        }
+
+        async function handleSetupResponse(res) {
+            const data = await res.json();
+            if (res.ok) {
+                document.getElementById('setup-success-msg').textContent = data.message;
+                document.getElementById('setup-success-msg').style.display = 'block';
+                document.getElementById('setup-error-msg').style.display = 'none';
+                setTimeout(() => {
+                    alert("Le backend doit être redémarré pour prendre en compte la configuration de la base.");
+                }, 500);
+            } else {
+                document.getElementById('setup-error-msg').textContent = data.detail || 'Erreur inconnue';
+                document.getElementById('setup-error-msg').style.display = 'block';
+            }
+        }
+
+        document.getElementById('setup-existing-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const path = document.getElementById('existing-db-path').value;
+            try {
+                const res = await fetch('/api/system/setup_existing/', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ path })
+                });
+                await handleSetupResponse(res);
+            } catch(err) {
+                document.getElementById('setup-error-msg').textContent = "Erreur de connexion serveur.";
+                document.getElementById('setup-error-msg').style.display = 'block';
+            }
+        });
+
+        document.getElementById('setup-new-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const pwd = document.getElementById('new-admin-pwd').value;
+            const pwdConfirm = document.getElementById('new-admin-pwd-confirm').value;
+
+            if (pwd !== pwdConfirm) {
+                document.getElementById('setup-error-msg').textContent = "Les mots de passe ne correspondent pas.";
+                document.getElementById('setup-error-msg').style.display = 'block';
+                return;
+            }
+
+            const payload = {
+                path: document.getElementById('new-db-path').value,
+                admin_username: document.getElementById('new-admin-user').value,
+                admin_password: pwd
+            };
+
+            try {
+                const res = await fetch('/api/system/setup_new/', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(payload)
+                });
+                await handleSetupResponse(res);
+            } catch(err) {
+                document.getElementById('setup-error-msg').textContent = "Erreur de connexion serveur.";
+                document.getElementById('setup-error-msg').style.display = 'block';
+            }
+        });
+
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const username = document.getElementById('username').value;

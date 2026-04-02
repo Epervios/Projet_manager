@@ -42,11 +42,13 @@ Puis accès via :
 
 ## Configuration & Base de Données
 
-Le chemin d'accès au fichier `.db` SQLite n'est pas figé dans le code.
-- Par défaut, l'application tentera de créer ou lire la base sur le chemin `./database/projet_manager.db`.
-- **Page Paramètres** : Uniquement visible et accessible pour les utilisateurs `Administrateur`. Elle permet de modifier l'emplacement de la base SQLite et de tester la connexion.
-- **Configuration locale** : Ce paramètre est sauvegardé dans le fichier `config/settings.json`.
-- **IMPORTANT** : Après avoir sauvegardé un nouveau chemin via la page des paramètres, vous devez **arrêter et redémarrer manuellement** le processus `uvicorn` (FastAPI) dans votre console PowerShell pour que le nouveau fichier soit chargé par SQLAlchemy.
+Le chemin d'accès au fichier `.db` SQLite n'est pas figé dans le code et la configuration initiale de l'application a été sécurisée.
+- **Premier Lancement** : Si aucune base SQLite configurée n'est détectée ou exploitable, l'écran de login se transforme automatiquement en un écran de configuration sécurisé. Celui-ci permet soit de relier l'application à un `.db` existant, soit d'initialiser une nouvelle base locale tout en créant simultanément votre compte Administrateur de façon autonome, le tout sans erreur technique bloquante.
+- **Page Paramètres** : Uniquement visible et accessible pour les rôles `Administrateur`. Elle permet de :
+  - Modifier dynamiquement l'emplacement de la base SQLite et tester la connexion.
+  - Créer, modifier ou supprimer des utilisateurs de l'application (`Administrateur`, `Éditeur`, `Lecteur`), ainsi que réinitialiser leurs mots de passe.
+- **Configuration locale** : Ce paramètre de chemin est sauvegardé dans le fichier `config/settings.json`.
+- **IMPORTANT** : Après l'initialisation ou la sauvegarde d'un nouveau chemin de base, vous devez **arrêter et redémarrer manuellement** le processus `uvicorn` (FastAPI) dans votre console PowerShell pour que le changement soit chargé par le backend.
 
 ## Fonctionnalités Disponibles V1
 - **Authentification Locale** : Login simple par nom d'utilisateur/mot de passe avec droits applicatifs.

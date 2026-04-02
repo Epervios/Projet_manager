@@ -4,10 +4,13 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 import backend.models as models
 from backend.database import engine
-from backend.routers import api, auth_router, settings_router
+from backend.routers import api, auth_router, settings_router, users_router, system_router
 
-# Create tables
-models.Base.metadata.create_all(bind=engine)
+# Attempt to create tables, but don't fail if the path is invalid (system_router will handle setup)
+try:
+    models.Base.metadata.create_all(bind=engine)
+except Exception:
+    pass
 
 app = FastAPI(title="Projet Manager API", description="API pour la gestion de portefeuille projets interne")
 
@@ -30,6 +33,8 @@ app.include_router(api.task_router)
 app.include_router(api.document_router)
 app.include_router(api.dashboard_router)
 app.include_router(settings_router.settings_router)
+app.include_router(users_router.users_router)
+app.include_router(system_router.system_router)
 
 @app.get("/api/ping")
 def ping():
