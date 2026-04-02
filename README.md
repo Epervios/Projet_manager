@@ -22,27 +22,27 @@ L'application permet de centraliser et d'historiser le suivi de projets :
 
 ## Installation et démarrage sous Windows
 
-Cette procédure est optimisée pour les environnements Windows d'entreprise verrouillés (où l'exécution de scripts PowerShell comme `Activate.ps1` peut être bloquée). Ouvrez une invite de commande (CMD) ou PowerShell et suivez ces instructions :
+Cette procédure est optimisée pour les environnements Windows d'entreprise verrouillés (où l'exécution de scripts PowerShell comme `Activate.ps1` peut être bloquée). Ouvrez **PowerShell** et suivez ces instructions :
 
 1. **Cloner ou télécharger le dépôt**
-   ```cmd
+   ```powershell
    git clone <url_du_repo>
    cd Projet_manager
    ```
 
 2. **Créer un environnement virtuel**
-   ```cmd
+   ```powershell
    python -m venv venv
    ```
 
 3. **Installer les dépendances requises**
    Utilisez directement l'exécutable Python de l'environnement virtuel pour éviter les problèmes de droits :
-   ```cmd
+   ```powershell
    venv\Scripts\python.exe -m pip install -r requirements.txt
    ```
 
 4. **Initialiser la base de données par défaut**
-   ```cmd
+   ```powershell
    venv\Scripts\python.exe scripts\seed.py
    ```
    *Ce script va créer la base SQLite initiale dans `database\projet_manager.db`, y insérer les catégories de base, et générer l'utilisateur administrateur de secours.*
@@ -50,8 +50,9 @@ Cette procédure est optimisée pour les environnements Windows d'entreprise ver
    - **Mot de passe** : `admin`
 
 5. **Démarrer le serveur API (Backend)**
-   Le frontend est servi directement par FastAPI. Lancez le serveur via :
-   ```cmd
+   Le frontend est servi directement par FastAPI. Assurez-vous de définir le PYTHONPATH avant de lancer uvicorn :
+   ```powershell
+   $env:PYTHONPATH="."
    venv\Scripts\python.exe -m uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
    ```
 
